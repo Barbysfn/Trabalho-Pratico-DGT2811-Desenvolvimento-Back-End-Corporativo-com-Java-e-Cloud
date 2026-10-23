@@ -1,0 +1,11 @@
+# NetBeans / Ant
+build/
+dist/
+build-cli/
+**/build/
+**/dist/
+nbproject/private/
+**/nbproject/private/
+# logs e binarios baixados pelos scripts
+scripts/logs/
+scripts/drivers/
