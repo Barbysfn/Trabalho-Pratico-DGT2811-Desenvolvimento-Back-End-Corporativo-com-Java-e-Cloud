@@ -106,5 +106,14 @@ foreach ($p in @("nbproject", "CadastroEE-ejb\nbproject", "CadastroEE-war\nbproj
     Gravar (Join-Path $raiz "$p\private\private.properties") $priv
 }
 
+# 5) abrir os três projetos automaticamente na próxima vez que o NetBeans iniciar
+$prefs = Join-Path $ud "config\Preferences\org\netbeans\modules\projectui.properties"
+$urls = @($raiz, "$raiz\CadastroEE-ejb", "$raiz\CadastroEE-war") | ForEach-Object { ([Uri]((Resolve-Path $_).Path + "\")).AbsoluteUri }
+$linhas = @()
+if (Test-Path $prefs) { $linhas = Get-Content $prefs | Where-Object { $_ -notmatch '^(openProjectsURLs|openProjectsDisplayNames|openProjectsIcons|mainProjectURL)' } }
+for ($i = 0; $i -lt $urls.Count; $i++) { $linhas += "openProjectsURLs.$i=$($urls[$i])" }
+$linhas += "mainProjectURL=$($urls[0])"
+Gravar $prefs (($linhas -join "`r`n") + "`r`n")
+
 Write-Host "Concluido."
 Stop-Transcript | Out-Null

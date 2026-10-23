@@ -9,3 +9,4 @@ nbproject/private/
 # logs e binarios baixados pelos scripts
 scripts/logs/
 scripts/drivers/
+**/${build.ear.classes.dir}/
