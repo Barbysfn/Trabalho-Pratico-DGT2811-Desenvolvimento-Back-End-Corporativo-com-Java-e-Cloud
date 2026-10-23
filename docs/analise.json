@@ -1,0 +1,52 @@
+{
+ "proc1": [
+  [
+   "Como é organizado um projeto corporativo no NetBeans?",
+   "O NetBeans organiza um aplicativo corporativo (Enterprise Application, projeto Ant) em três projetos relacionados. O projeto principal, CadastroEE, não tem código próprio: ele apenas agrega os módulos e gera o arquivo CadastroEE.ear, que é a unidade implantada no GlassFish. O CadastroEE-ejb é o módulo EJB, onde ficam a camada de persistência (entidades JPA no pacote cadastroee.model e o persistence.xml) e a camada de controle (Session Beans e interfaces locais no pacote cadastroee.controller); ele gera um .jar. O CadastroEE-war é o módulo Web, com Servlets, JSPs, recursos estáticos e o web.xml; ele gera um .war e depende do módulo EJB para enxergar as interfaces dos Session Beans. Cada projeto tem seu build.xml e a pasta nbproject com as configurações (servidor de destino, bibliotecas, plataforma Jakarta EE), e o NetBeans resolve as dependências entre eles ao compilar e implantar o projeto principal."
+  ],
+  [
+   "Qual o papel das tecnologias JPA e EJB na construção de um aplicativo para a plataforma Web no ambiente Java?",
+   "A JPA (Jakarta Persistence) faz o mapeamento objeto-relacional: cada tabela do banco loja vira uma classe anotada com @Entity, e o EntityManager traduz operações sobre objetos (persist, merge, remove, find, consultas JPQL) em comandos SQL, sem que a aplicação precise escrever JDBC manualmente. O provedor (EclipseLink, no GlassFish) usa o DataSource jdbc/loja, obtido por JNDI a partir do pool SQLServerPool. Os EJBs (Enterprise JavaBeans) concentram as regras de negócio em componentes gerenciados pelo servidor: o container cria e reaproveita as instâncias em um pool, injeta o EntityManager (@PersistenceContext), controla as transações automaticamente (cada método de um @Stateless roda em uma transação JTA) e cuida de segurança e concorrência. Assim, a camada Web apenas chama métodos de negócio, e a persistência e as transações ficam a cargo do servidor de aplicação."
+  ],
+  [
+   "Como o NetBeans viabiliza a melhoria de produtividade ao lidar com as tecnologias JPA e EJB?",
+   "Por meio de assistentes que geram código a partir do banco de dados. O \"New Entity Classes from Database\" lê as tabelas pelo Data Source jdbc/loja e cria todas as entidades com @Entity, @Table, @Id, @Column, relacionamentos (@OneToMany, @ManyToOne, @OneToOne), validações (@NotNull, @Size) e consultas nomeadas, além do persistence.xml. Em seguida, o \"New Session Beans for Entity Classes\" gera um Session Bean @Stateless (sufixo Facade) e uma interface @Local (sufixo FacadeLocal) para cada entidade, todos herdando de AbstractFacade com o CRUD completo (create, edit, remove, find, findAll, findRange e count). Somam-se a isso a integração com o GlassFish (iniciar, implantar e ver logs pela aba Serviços), a aba de Banco de Dados para consultar o SQL Server, o autocompletar de anotações e a implantação com um clique em Run."
+  ],
+  [
+   "O que são Servlets, e como o NetBeans oferece suporte à construção desse tipo de componentes em um projeto Web?",
+   "Servlets são classes Java que estendem HttpServlet e rodam no container Web do servidor, respondendo a requisições HTTP: o container chama doGet ou doPost, entregando os objetos HttpServletRequest (dados da requisição) e HttpServletResponse (resposta a ser gerada). São o ponto de entrada da camada Web e podem gerar HTML diretamente ou encaminhar a requisição para uma JSP. No NetBeans, o assistente New › Servlet gera a classe com o método processRequest e os métodos doGet/doPost já ligados a ele, permite definir nome, pacote e padrão de URL e, com a opção \"Add information to deployment descriptor\", registra o Servlet no web.xml. O editor ainda oferece a inserção de chamadas a EJBs (Insert Code › Call Enterprise Bean), que adiciona o atributo anotado com @EJB."
+  ],
+  [
+   "Como é feita a comunicação entre os Servlets e os Session Beans do pool de EJBs?",
+   "Por injeção de dependência. No Servlet é declarado um atributo do tipo da interface local, anotado com @EJB (ProdutoFacadeLocal facade). Ao instanciar o Servlet, o container localiza o Session Bean via JNDI e injeta uma referência (um proxy) para ele. Quando o Servlet chama facade.findAll(), o container obtém uma instância livre do pool de ProdutoFacade (que é @Stateless), abre a transação, executa o método e devolve a instância ao pool. Como os módulos estão no mesmo EAR e na mesma JVM, a chamada usa a interface @Local, com passagem de parâmetros por referência e sem custo de comunicação remota."
+  ]
+ ],
+ "proc2": [
+  [
+   "Como funciona o padrão Front Controller, e como ele é implementado em um aplicativo Web Java, na arquitetura MVC?",
+   "No Front Controller, um único componente recebe todas as requisições de uma funcionalidade e decide o que fazer com cada uma, em vez de cada página ter seu próprio controlador. Em Java Web ele é implementado por um Servlet, aqui o ServletProdutoFC: ele lê o parâmetro acao (listar, incluir, alterar, excluir, formIncluir, formAlterar), aciona o Model (o EJB ProdutoFacadeLocal e a entidade Produto) para executar a regra de negócio, coloca os dados necessários como atributos do request e escolhe a View (ProdutoLista.jsp ou ProdutoDados.jsp), para a qual faz o forward. Assim, no MVC o Servlet é o Controller, as JSPs são as Views e os EJBs com as entidades JPA formam o Model, o que centraliza o controle de fluxo, facilita tratar erros e evita lógica de negócio dentro das páginas."
+  ],
+  [
+   "Quais as diferenças e semelhanças entre Servlets e JSPs?",
+   "Semelhanças: ambos rodam no container Web, têm acesso aos mesmos objetos (request, response, session, application) e geram respostas HTTP dinâmicas. Na verdade, uma JSP é traduzida pelo servidor em um Servlet e compilada no primeiro acesso. Diferenças: o Servlet é uma classe Java em que o HTML precisa ser escrito dentro do código (out.println), o que o torna adequado para controle, processamento e regras; a JSP é um documento HTML com trechos Java (scriptlets <% %>, expressões <%= %>, diretivas <%@ %>) ou tags, sendo mais natural para a apresentação. Por isso, no MVC o Servlet faz o papel de controlador e a JSP o de visão."
+  ],
+  [
+   "Qual a diferença entre um redirecionamento simples e o uso do método forward, a partir do RequestDispatcher? Para que servem parâmetros e atributos nos objetos HttpRequest?",
+   "O redirecionamento simples (response.sendRedirect) devolve ao navegador uma resposta 302 com uma nova URL; o navegador faz uma segunda requisição, a barra de endereços muda e os dados do request original se perdem. O forward (request.getRequestDispatcher(destino).forward(request, response)) acontece dentro do servidor: a mesma requisição é repassada para outro recurso (a JSP), em uma única viagem, sem que o navegador saiba, preservando os atributos do request. Parâmetros são os dados enviados pelo cliente (query string ou campos do formulário), sempre do tipo String e somente leitura, lidos com getParameter (ex.: acao, id, nome). Atributos são objetos Java que o servidor coloca no request com setAttribute e recupera com getAttribute, usados para passar dados entre componentes no servidor, como a lista de produtos ou o produto em edição que o Servlet entrega às JSPs."
+  ]
+ ],
+ "proc3": [
+  [
+   "Como o framework Bootstrap é utilizado?",
+   "O Bootstrap é incluído nas páginas por CDN: um <link> para o arquivo bootstrap.min.css e um <script> para o bootstrap.bundle.min.js, no <head> de ProdutoLista.jsp e ProdutoDados.jsp. A partir daí, basta aplicar as classes prontas aos elementos HTML: container no body, btn btn-primary m-2 no link de inclusão, table table-striped na tabela e table-dark no cabeçalho, btn btn-primary btn-sm e btn btn-danger btn-sm nos links de alterar e excluir, e no formulário as classes form, mb-3 (agrupando cada label/input), form-label, form-control e btn btn-primary no botão. Nenhum CSS próprio precisou ser escrito."
+  ],
+  [
+   "Por que o Bootstrap garante a independência estrutural do HTML?",
+   "Porque toda a aparência é definida por classes CSS do framework, e não pela estrutura ou por atributos visuais no HTML. A marcação continua semântica (table, thead, form, label, input, a) e o visual muda apenas acrescentando ou trocando classes. O mesmo documento pode ser exibido de forma totalmente diferente trocando o tema ou removendo o CSS, sem alterar a lógica das JSPs. Isso separa conteúdo de apresentação e permite evoluir o design sem mexer no código Java."
+  ],
+  [
+   "Qual a relação entre o Bootstrap e a responsividade da página?",
+   "O Bootstrap é construído com abordagem mobile-first: usa media queries e breakpoints (sm, md, lg, xl, xxl), o sistema de grid em 12 colunas e componentes flexíveis, de forma que o layout se adapta à largura da tela. A classe container ajusta a largura máxima do conteúdo a cada breakpoint, os campos form-control ocupam 100% da largura disponível e as tabelas e botões se reorganizam em telas pequenas. Junto com a meta tag viewport (width=device-width, initial-scale=1), as páginas ficam legíveis em celulares, tablets e desktops sem CSS adicional."
+  ]
+ ]
+}

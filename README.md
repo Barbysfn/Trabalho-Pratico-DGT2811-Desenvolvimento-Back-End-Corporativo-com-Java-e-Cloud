@@ -67,7 +67,7 @@ CadastroEE/
 │   ├── sql/loja.sql                     cria o banco loja, o login loja e dados de exemplo
 │   ├── 01-instalar-ambiente.ps1         instala JDK 17, NetBeans, SQL Server, GlassFish e cria o pool
 │   └── 02-compilar-implantar.ps1        compila, implanta o EAR e testa as URLs
-└── docs/                                relatório (PDF) e capturas de tela
+└── docs/                                relatório (PDF/DOCX), capturas de tela e gerador do relatório
 ```
 
 ## 📋 Pré-requisitos
@@ -121,7 +121,11 @@ create-jdbc-resource --connectionpoolid SQLServerPool jdbc/loja
 
 ## 📄 Relatório
 
-O relatório da prática está em [`docs/`](docs/).
+📄 **[Relatório da prática (PDF)](docs/Relatorio-CadastroEE.pdf)** — título, objetivos, todos os códigos, resultados da execução (capturas de tela) e as respostas de *Análise e Conclusão* dos três procedimentos. A versão editável está em [`docs/Relatorio-CadastroEE.docx`](docs/Relatorio-CadastroEE.docx) e as capturas em [`docs/img/`](docs/img/).
+
+| Procedimento 2 (Servlet + JSP) | Procedimento 3 (Bootstrap) |
+|---|---|
+| ![Listagem simples](docs/img/p2-01-listar.png) | ![Listagem com Bootstrap](docs/img/p3-01-listar.png) |
 
 ---
 
@@ -129,4 +133,4 @@ O relatório da prática está em [`docs/`](docs/).
 
 **Bárbara Floripes** — Trabalho Prático da disciplina **DGT2811 – Desenvolvimento Back-End Corporativo com Java e Cloud**.
 
-**GitHub:** [@barbysfn](https://github.com/barbysfn)
+**GitHub:** [@Barbysfn](https://github.com/Barbysfn)
