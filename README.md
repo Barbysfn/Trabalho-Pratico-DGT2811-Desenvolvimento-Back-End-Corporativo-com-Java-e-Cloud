@@ -1,7 +1,7 @@
 <h1 align="center">🏪 CadastroEE</h1>
 
 <p align="center">
-  Trabalho Prático | <strong>DGT2811 – Desenvolvimento Back-End Corporativo com Java e Cloud</strong><br>
+  Trabalho Prático | <strong>DGT2811 – Desenvolvimento Back-End Corporativo com Java</strong><br>
   Sistema cadastral Web com <strong>JPA</strong>, <strong>EJB</strong>, <strong>Servlets</strong>, <strong>JSP</strong> e
   <strong>Bootstrap</strong>, rodando no <strong>GlassFish 6</strong> com banco <strong>SQL Server</strong>.
 </p>
@@ -131,6 +131,6 @@ create-jdbc-resource --connectionpoolid SQLServerPool jdbc/loja
 
 ## 👩‍💻 Autora
 
-**Bárbara Floripes** — Trabalho Prático da disciplina **DGT2811 – Desenvolvimento Back-End Corporativo com Java e Cloud**.
+**Bárbara Floripes** — Trabalho Prático da disciplina **DGT2811 – Desenvolvimento Back-End Corporativo com Java**.
 
 **GitHub:** [@Barbysfn](https://github.com/Barbysfn)
